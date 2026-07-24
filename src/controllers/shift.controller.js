@@ -4,4 +4,4 @@ class ShiftController {
   }
 }
 
-module.exports = ShiftController;
+export default ShiftController;

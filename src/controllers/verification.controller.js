@@ -4,4 +4,4 @@ class VerificationController {
   }
 }
 
-module.exports = VerificationController;
+export default VerificationController;

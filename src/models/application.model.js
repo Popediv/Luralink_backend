@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const applicationSchema = new mongoose.Schema({
   shiftId: { type: mongoose.Schema.Types.ObjectId, ref: 'Shift', required: true },

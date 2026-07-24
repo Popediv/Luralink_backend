@@ -4,4 +4,4 @@ class PaystackService {
   }
 }
 
-module.exports = PaystackService;
+export default PaystackService;

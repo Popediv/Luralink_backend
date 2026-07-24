@@ -4,4 +4,4 @@ class EscrowService {
   }
 }
 
-module.exports = EscrowService;
+export default EscrowService;

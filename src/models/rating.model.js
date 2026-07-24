@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ratingSchema = new mongoose.Schema({
   fromUserId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

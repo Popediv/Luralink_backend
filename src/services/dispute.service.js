@@ -4,4 +4,4 @@ class DisputeService {
   }
 }
 
-module.exports = DisputeService;
+export default DisputeService;

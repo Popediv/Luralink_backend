@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("worker")
+  createdAt DateTime @default(now())
+}
+
+model Worker {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique
+  skills       String[]
+  availability String   @default("available")
+  rating       Float    @default(0)
+  createdAt    DateTime @default(now())
+}
+
+model Facility {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  name      String
+  address   String
+  createdAt DateTime @default(now())
+}
+
+model Shift {
+  id        Int      @id @default(autoincrement())
+  facilityId Int
+  workerId   Int?
+  title      String
+  startTime  DateTime
+  endTime    DateTime
+  status     String   @default("open")
+  createdAt  DateTime @default(now())
+}
+
+model Application {
+  id        Int      @id @default(autoincrement())
+  shiftId   Int
+  workerId  Int
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  applicationId Int
+  amount        Float
+  status        String   @default("pending")
+  reference     String   @unique
+  createdAt     DateTime @default(now())
+}
+
+model Verification {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  status       String   @default("pending")
+  documentUrl  String?
+  createdAt    DateTime @default(now())
+}
+
+model Rating {
+  id          Int      @id @default(autoincrement())
+  fromUserId  Int
+  toUserId    Int
+  score       Int
+  comment     String?
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
