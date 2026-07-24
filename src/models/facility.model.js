@@ -1,10 +1,5 @@
-import mongoose from 'mongoose';
+import { prisma } from '../config/db.js';
 
-const facilitySchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  name: { type: String, required: true },
-  address: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+const Facility = prisma.facility;
 
-module.exports = mongoose.model('Facility', facilitySchema);
+export default Facility;

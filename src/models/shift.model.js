@@ -1,13 +1,5 @@
-import mongoose from 'mongoose';
+import { prisma } from '../config/db.js';
 
-const shiftSchema = new mongoose.Schema({
-  facilityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Facility', required: true },
-  workerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Worker' },
-  title: { type: String, required: true },
-  startTime: { type: Date, required: true },
-  endTime: { type: Date, required: true },
-  status: { type: String, enum: ['open', 'assigned', 'completed'], default: 'open' },
-  createdAt: { type: Date, default: Date.now }
-});
+const Shift = prisma.shift;
 
-module.exports = mongoose.model('Shift', shiftSchema);
+export default Shift;

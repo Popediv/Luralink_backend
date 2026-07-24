@@ -1,11 +1,5 @@
-import mongoose from 'mongoose';
+import { prisma } from '../config/db.js';
 
-const paymentSchema = new mongoose.Schema({
-  applicationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Application', required: true },
-  amount: { type: Number, required: true },
-  status: { type: String, enum: ['pending', 'success', 'failed'], default: 'pending' },
-  reference: { type: String, required: true, unique: true },
-  createdAt: { type: Date, default: Date.now }
-});
+const Payment = prisma.payment;
 
-module.exports = mongoose.model('Payment', paymentSchema);
+export default Payment;

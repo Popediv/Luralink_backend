@@ -7,82 +7,171 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  worker
+  facility_admin
+  platform_admin
+}
+
+enum VerificationStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ShiftStatus {
+  open
+  assigned
+  in_progress
+  completed_pending_confirmation
+  completed
+  paid
+}
+
+enum ApplicationStatus {
+  applied
+  accepted
+  rejected
+}
+
+enum EscrowStatus {
+  pending
+  funded
+  released
+  refunded
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("worker")
-  createdAt DateTime @default(now())
+  id            Int             @id @default(autoincrement())
+  name          String
+  email         String          @unique
+  password      String
+  role          Role            @default(worker)
+  fcmToken      String?
+  createdAt     DateTime        @default(now())
+
+  worker        Worker?
+  facility      Facility?
+  notifications Notification[]
+  ratingsGiven  Rating[]        @relation("RatingsGiven")
+  ratingsReceived Rating[]      @relation("RatingsReceived")
+  verifications Verification[]
+  disputesRuled Dispute[]       @relation("DisputeRuledBy")
 }
 
 model Worker {
   id           Int      @id @default(autoincrement())
   userId       Int      @unique
+  user         User     @relation(fields: [userId], references: [id])
   skills       String[]
+  latitude     Float?
+  longitude    Float?
   availability String   @default("available")
   rating       Float    @default(0)
   createdAt    DateTime @default(now())
+
+  applications Application[]
+  shifts       Shift[]         @relation("AssignedShifts")
 }
 
 model Facility {
   id        Int      @id @default(autoincrement())
   userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
   name      String
+  type      String   // hospital / clinic / diagnostic_center
   address   String
+  latitude  Float?
+  longitude Float?
   createdAt DateTime @default(now())
+
+  shifts    Shift[]
 }
 
 model Shift {
-  id        Int      @id @default(autoincrement())
-  facilityId Int
-  workerId   Int?
-  title      String
-  startTime  DateTime
-  endTime    DateTime
-  status     String   @default("open")
-  createdAt  DateTime @default(now())
+  id          Int         @id @default(autoincrement())
+  facilityId  Int
+  facility    Facility    @relation(fields: [facilityId], references: [id])
+  workerId    Int?
+  worker      Worker?     @relation("AssignedShifts", fields: [workerId], references: [id])
+  title       String
+  specialty   String
+  payRate     Float
+  latitude    Float?
+  longitude   Float?
+  startTime   DateTime
+  endTime     DateTime
+  status      ShiftStatus @default(open)
+  completedAt DateTime?
+  createdAt   DateTime    @default(now())
+
+  applications Application[]
+  payment      Payment?
+  disputes     Dispute[]
 }
 
 model Application {
-  id        Int      @id @default(autoincrement())
+  id        Int                @id @default(autoincrement())
   shiftId   Int
+  shift     Shift              @relation(fields: [shiftId], references: [id])
   workerId  Int
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
+  worker    Worker             @relation(fields: [workerId], references: [id])
+  status    ApplicationStatus  @default(applied)
+  createdAt DateTime           @default(now())
 }
 
 model Payment {
-  id            Int      @id @default(autoincrement())
-  applicationId Int
-  amount        Float
-  status        String   @default("pending")
-  reference     String   @unique
-  createdAt     DateTime @default(now())
+  id          Int          @id @default(autoincrement())
+  shiftId     Int          @unique
+  shift       Shift        @relation(fields: [shiftId], references: [id])
+  amount      Float
+  escrowStatus EscrowStatus @default(pending)
+  reference   String       @unique
+  releasedAt  DateTime?
+  createdAt   DateTime     @default(now())
 }
 
 model Verification {
-  id           Int      @id @default(autoincrement())
+  id           Int                @id @default(autoincrement())
   userId       Int
-  status       String   @default("pending")
-  documentUrl  String?
-  createdAt    DateTime @default(now())
+  user         User               @relation(fields: [userId], references: [id])
+  documentType String             // license / government_id / photo
+  documentUrl  String
+  status       VerificationStatus @default(pending)
+  reviewedBy   Int?
+  reviewNote   String?
+  createdAt    DateTime           @default(now())
 }
 
 model Rating {
-  id          Int      @id @default(autoincrement())
-  fromUserId  Int
-  toUserId    Int
-  score       Int
-  comment     String?
-  createdAt   DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  fromUserId Int
+  fromUser   User     @relation("RatingsGiven", fields: [fromUserId], references: [id])
+  toUserId   Int
+  toUser     User     @relation("RatingsReceived", fields: [toUserId], references: [id])
+  score      Int
+  comment    String?
+  createdAt  DateTime @default(now())
 }
 
 model Notification {
   id        Int      @id @default(autoincrement())
   userId    Int
+  user      User     @relation(fields: [userId], references: [id])
   title     String
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model Dispute {
+  id         Int      @id @default(autoincrement())
+  shiftId    Int
+  shift      Shift    @relation(fields: [shiftId], references: [id])
+  raisedAt   DateTime @default(now())
+  ruling     String?  // release_to_worker / refund_facility
+  ruledById  Int?
+  ruledBy    User?    @relation("DisputeRuledBy", fields: [ruledById], references: [id])
+  ruledAt    DateTime?
+  createdAt  DateTime @default(now())
 }
