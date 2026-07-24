@@ -4,4 +4,4 @@ class RatingController {
   }
 }
 
-module.exports = RatingController;
+export default RatingController;

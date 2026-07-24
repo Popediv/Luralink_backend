@@ -1,6 +1,7 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-module.exports = {
+export default {
   port: process.env.PORT || 5000,
   nodeEnv: process.env.NODE_ENV || 'development',
   postgresConnectionString: process.env.DATABASE_URL || process.env.POSTGRES_URI || 'postgresql://postgres:postgres@localhost:5432/luralink',

@@ -4,4 +4,4 @@ class WorkerController {
   }
 }
 
-module.exports = WorkerController;
+export default WorkerController;

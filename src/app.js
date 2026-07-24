@@ -1,19 +1,19 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
 
-const authRoutes = require('./routes/auth.routes');
-const workerRoutes = require('./routes/worker.routes');
-const facilityRoutes = require('./routes/facility.routes');
-const shiftRoutes = require('./routes/shift.routes');
-const applicationRoutes = require('./routes/application.routes');
-const paymentRoutes = require('./routes/payment.routes');
-const verificationRoutes = require('./routes/verification.routes');
-const ratingRoutes = require('./routes/rating.routes');
-const notificationRoutes = require('./routes/notification.routes');
-const paystackWebhook = require('./webhooks/paystack.webhook');
+import authRoutes from './routes/auth.routes.js';
+import workerRoutes from './routes/worker.routes.js';
+import facilityRoutes from './routes/facility.routes.js';
+import shiftRoutes from './routes/shift.routes.js';
+import applicationRoutes from './routes/application.routes.js';
+import paymentRoutes from './routes/payment.routes.js';
+import verificationRoutes from './routes/verification.routes.js';
+import ratingRoutes from './routes/rating.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
+import paystackWebhook from './webhooks/paystack.webhook.js';
 
-const errorMiddleware = require('./middleware/error.middleware');
+import errorMiddleware from './middleware/error.middleware.js';
 
 const app = express();
 
@@ -39,4 +39,4 @@ app.use('/api/webhooks/paystack', paystackWebhook);
 
 app.use(errorMiddleware);
 
-module.exports = app;
+export default app;

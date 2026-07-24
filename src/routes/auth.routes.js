@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 router.post('/login', (_req, res) => {
   res.status(200).json({ message: 'Auth route placeholder' });
 });
 
-module.exports = router;
+export default router;

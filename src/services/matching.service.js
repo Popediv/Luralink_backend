@@ -4,4 +4,4 @@ class MatchingService {
   }
 }
 
-module.exports = MatchingService;
+export default MatchingService;

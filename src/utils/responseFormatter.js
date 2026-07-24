@@ -6,4 +6,4 @@ function errorResponse(res, statusCode = 400, message = 'Request failed') {
   return res.status(statusCode).json({ success: false, message });
 }
 
-module.exports = { successResponse, errorResponse };
+export { successResponse, errorResponse };

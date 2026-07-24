@@ -1,19 +1,10 @@
-const { Pool } = require('pg');
-const { postgresConnectionString } = require('./env');
+import { PrismaClient } from '@prisma/client';
 
-const pool = new Pool({
-  connectionString: postgresConnectionString
-});
+const prisma = new PrismaClient();
 
 async function connectDb() {
-  if (!postgresConnectionString) {
-    throw new Error('PostgreSQL connection string is not defined');
-  }
-
-  const client = await pool.connect();
-  await client.query('SELECT NOW()');
-  client.release();
-  console.log('PostgreSQL connected');
+  await prisma.$connect();
+  console.log('Prisma connected');
 }
 
-module.exports = { pool, connectDb };
+export { prisma, connectDb };

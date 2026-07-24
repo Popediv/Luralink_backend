@@ -4,4 +4,4 @@ class FacilityController {
   }
 }
 
-module.exports = FacilityController;
+export default FacilityController;

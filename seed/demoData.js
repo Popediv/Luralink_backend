@@ -1,13 +1,9 @@
-const { pool } = require('../src/config/db');
+import { prisma } from '../src/config/db.js';
 
 async function seed() {
-  const client = await pool.connect();
-  try {
-    await client.query('SELECT 1');
-    console.log('Seed data placeholder executed');
-  } finally {
-    client.release();
-  }
+  await prisma.$connect();
+  console.log('Seed data placeholder executed');
+  await prisma.$disconnect();
 }
 
 seed().catch((err) => {
