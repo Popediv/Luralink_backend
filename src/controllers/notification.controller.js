@@ -1,7 +1,7 @@
 
 import NotificationService from '../services/notification.service.js';
 import { successResponse, errorResponse } from '../utils/responseFormatter.js';
-import { log } from '../utils/logger.js';
+import { logger } from '../utils/logger.js';
 
 class NotificationController {
   /**

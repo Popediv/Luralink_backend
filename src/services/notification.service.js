@@ -1,6 +1,6 @@
 
 import { prisma } from '../config/db.js';
-import { log } from '../utils/logger.js';
+import { logger } from '../utils/logger.js';
 
 class NotificationService {
   /**
@@ -24,7 +24,7 @@ class NotificationService {
 
       return notifications;
     } catch (error) {
-      log('Error getting user notifications', { error: error.message });
+      logger.error('Error getting user notifications', { error: error.message });
       throw error;
     }
   }
