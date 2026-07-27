@@ -10,7 +10,7 @@ async function startServer() {
   try {
     await connectDb();
   } catch (error) {
-    console.warn('MongoDB connection skipped or failed:', error.message);
+    console.warn('DB connection skipped or failed:', error.message);
   }
 
   app.listen(port, () => {
