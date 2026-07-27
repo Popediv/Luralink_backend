@@ -1,15 +1,11 @@
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 
-
-const prisma = new PrismaClient;
+const prisma = new PrismaClient();
 
 async function connectDb() {
-  if (prisma && typeof prisma.$connect === 'function') {
-    await prisma.$connect();
-    console.log('Prisma connected');
-  }
+  await prisma.$connect();
+  console.log('Prisma connected');
 }
-
-
 
 export { prisma, connectDb };
