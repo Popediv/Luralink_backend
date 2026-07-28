@@ -43,7 +43,7 @@ class NotificationService {
 
       return notification;
     } catch (error) {
-      log('Error getting notification by id', { error: error.message });
+      logger.error('Error getting notification by id', { error: error.message });
       throw error;
     }
   }
@@ -76,10 +76,10 @@ class NotificationService {
         },
       });
 
-      log('Notification created', { notificationId: notification.id, recipientId });
+      logger.info('Notification created', { notificationId: notification.id, recipientId });
       return notification;
     } catch (error) {
-      log('Error creating notification', { error: error.message });
+      logger.error('Error creating notification', { error: error.message });
       throw error;
     }
   }
@@ -103,12 +103,12 @@ class NotificationService {
           type,
         });
       } catch (pushErr) {
-        log('Push send failed (non-blocking)', { error: pushErr.message, recipientId });
+        logger.error('Push send failed (non-blocking)', { error: pushErr.message, recipientId });
       }
 
       return notification;
     } catch (error) {
-      log('Error triggering notification', { error: error.message });
+      logger.error('Error triggering notification', { error: error.message });
       throw error;
     }
   }
@@ -122,17 +122,17 @@ class NotificationService {
       const user = await prisma.user.findUnique({ where: { id: userId }, select: { pushTokens: true } });
 
       if (!user || !user.pushTokens || user.pushTokens.length === 0) {
-        log('No push tokens for user', { userId });
+        logger.info('No push tokens for user', { userId });
         return null;
       }
 
       // Integrate with your push provider here (FCM, OneSignal, etc.)
       // Example (pseudo): await fcm.sendMulticast({ tokens: user.pushTokens, notification: { title: data.title, body: data.message }, data });
 
-      log('Simulated push sent', { userId, tokens: user.pushTokens.length });
+      logger.info('Simulated push sent', { userId, tokens: user.pushTokens.length });
       return true;
     } catch (error) {
-      log('Error sending push notification', { error: error.message, userId });
+      logger.error('Error sending push notification', { error: error.message, userId });
       // Don't throw to avoid breaking main flow
       return null;
     }
@@ -157,10 +157,10 @@ class NotificationService {
         })),
       });
 
-      log('Bulk notifications created', { count: notifications.count });
+      logger.info('Bulk notifications created', { count: notifications.count });
       return notifications;
     } catch (error) {
-      log('Error creating bulk notifications', { error: error.message });
+      logger.error('Error creating bulk notifications', { error: error.message });
       throw error;
     }
   }
@@ -187,7 +187,7 @@ class NotificationService {
 
       return await this.getNotificationById(id, userId);
     } catch (error) {
-      log('Error marking notification as read', { error: error.message });
+      logger.error('Error marking notification as read', { error: error.message });
       throw error;
     }
   }
@@ -208,10 +208,10 @@ class NotificationService {
         },
       });
 
-      log('All notifications marked as read', { userId, count: result.count });
+      logger.info('All notifications marked as read', { userId, count: result.count });
       return result.count;
     } catch (error) {
-      log('Error marking all as read', { error: error.message });
+      logger.error('Error marking all as read', { error: error.message });
       throw error;
     }
   }
@@ -236,10 +236,10 @@ class NotificationService {
         where: { id },
       });
 
-      log('Notification deleted', { notificationId: id });
+      logger.info('Notification deleted', { notificationId: id });
       return notification;
     } catch (error) {
-      log('Error deleting notification', { error: error.message });
+      logger.error('Error deleting notification', { error: error.message });
       throw error;
     }
   }
@@ -255,10 +255,10 @@ class NotificationService {
         },
       });
 
-      log('All notifications deleted', { userId, count: result.count });
+      logger.info('All notifications deleted', { userId, count: result.count });
       return result.count;
     } catch (error) {
-      log('Error deleting all notifications', { error: error.message });
+      logger.error('Error deleting all notifications', { error: error.message });
       throw error;
     }
   }
@@ -277,7 +277,7 @@ class NotificationService {
 
       return count;
     } catch (error) {
-      log('Error getting unread count', { error: error.message });
+      logger.error('Error getting unread count', { error: error.message });
       throw error;
     }
   }
@@ -304,7 +304,7 @@ class NotificationService {
 
       return results;
     } catch (error) {
-      log('Error searching notifications', { error: error.message });
+      logger.error('Error searching notifications', { error: error.message });
       throw error;
     }
   }
@@ -325,7 +325,7 @@ class NotificationService {
 
       return notifications;
     } catch (error) {
-      log('Error getting notifications by type', { error: error.message });
+      logger.error('Error getting notifications by type', { error: error.message });
       throw error;
     }
   }
@@ -345,7 +345,7 @@ class NotificationService {
 
       return notifications;
     } catch (error) {
-      log('Error getting notifications by related id', { error: error.message });
+      logger.error('Error getting notifications by related id', { error: error.message });
       throw error;
     }
   }
@@ -366,10 +366,10 @@ class NotificationService {
         },
       });
 
-      log('Old notifications deleted', { days, count: result.count });
+      logger.info('Old notifications deleted', { days, count: result.count });
       return result.count;
     } catch (error) {
-      log('Error deleting old notifications', { error: error.message });
+      logger.error('Error deleting old notifications', { error: error.message });
       throw error;
     }
   }

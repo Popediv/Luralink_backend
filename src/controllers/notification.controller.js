@@ -25,7 +25,7 @@ class NotificationController {
         total: notifications.length,
       });
     } catch (error) {
-      log('Error fetching notifications', { error: error.message });
+      logger.error('Error fetching notifications', { error: error.message });
       return errorResponse(res, 500, 'Failed to fetch notifications');
     }
   }
@@ -46,7 +46,7 @@ class NotificationController {
 
       return successResponse(res, 200, notification);
     } catch (error) {
-      log('Error fetching notification', { error: error.message });
+      logger.error('Error fetching notification', { error: error.message });
       return errorResponse(res, 500, 'Failed to fetch notification');
     }
   }
@@ -78,7 +78,7 @@ class NotificationController {
 
       return successResponse(res, 201, notification);
     } catch (error) {
-      log('Error creating notification', { error: error.message });
+      logger.error('Error creating notification', { error: error.message });
       return errorResponse(res, 500, 'Failed to create notification');
     }
   }
@@ -99,7 +99,7 @@ class NotificationController {
 
       return successResponse(res, 200, notification);
     } catch (error) {
-      log('Error marking notification as read', { error: error.message });
+      logger.error('Error marking notification as read', { error: error.message });
       return errorResponse(res, 500, 'Failed to mark notification as read');
     }
   }
@@ -115,7 +115,7 @@ class NotificationController {
 
       return successResponse(res, 200, { message: `${count} notifications marked as read`, count });
     } catch (error) {
-      log('Error marking all notifications as read', { error: error.message });
+      logger.error('Error marking all notifications as read', { error: error.message });
       return errorResponse(res, 500, 'Failed to mark notifications as read');
     }
   }
@@ -136,7 +136,7 @@ class NotificationController {
 
       return successResponse(res, 200, { message: 'Notification deleted successfully' });
     } catch (error) {
-      log('Error deleting notification', { error: error.message });
+      logger.error('Error deleting notification', { error: error.message });
       return errorResponse(res, 500, 'Failed to delete notification');
     }
   }
@@ -152,7 +152,7 @@ class NotificationController {
 
       return successResponse(res, 200, { message: `${count} notifications deleted successfully`, count });
     } catch (error) {
-      log('Error deleting all notifications', { error: error.message });
+      logger.error('Error deleting all notifications', { error: error.message });
       return errorResponse(res, 500, 'Failed to delete notifications');
     }
   }
@@ -168,7 +168,7 @@ class NotificationController {
 
       return successResponse(res, 200, { unreadCount: count });
     } catch (error) {
-      log('Error fetching unread count', { error: error.message });
+      logger.error('Error fetching unread count', { error: error.message });
       return errorResponse(res, 500, 'Failed to fetch unread count');
     }
   }
@@ -189,7 +189,7 @@ class NotificationController {
 
       return successResponse(res, 200, { results, total: results.length });
     } catch (error) {
-      log('Error searching notifications', { error: error.message });
+      logger.error('Error searching notifications', { error: error.message });
       return errorResponse(res, 500, 'Failed to search notifications');
     }
   }
