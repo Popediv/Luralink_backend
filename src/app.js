@@ -12,7 +12,7 @@ import facilityRoutes from './routes/facility.routes.js';
 // import paymentRoutes from './routes/payment.routes.js';
 import verificationRoutes from './routes/verification.routes.js';
 // import ratingRoutes from './routes/rating.routes.js';
-// import notificationRoutes from './routes/notification.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
 // import paystackWebhook from './webhooks/paystack.webhook.js';
 
 
@@ -35,7 +35,7 @@ app.use('/api/facilities', facilityRoutes);
 // app.use('/api/payments', paymentRoutes);
 app.use('/api/verification', verificationRoutes);
 // app.use('/api/ratings', ratingRoutes);
-// app.use('/api/notifications', notificationRoutes);
+app.use('/api/notifications', notificationRoutes);
 // app.use('/api/webhooks/paystack', paystackWebhook);
 
 app.use(errorMiddleware);

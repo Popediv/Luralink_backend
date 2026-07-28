@@ -1,6 +1,7 @@
 {
   "name": "luralink-backend",
   "version": "1.0.0",
+  "private": true,
   "description": "Luralink backend service",
   "type": "module",
   "main": "server.js",
