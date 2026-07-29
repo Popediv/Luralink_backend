@@ -1,12 +1,9 @@
-
 import NotificationService from '../services/notification.service.js';
 import { successResponse, errorResponse } from '../utils/responseFormatter.js';
 import { logger } from '../utils/logger.js';
 
 class NotificationController {
-  /**
-   * Get all notifications for the authenticated user
-   */
+  // Get all notifications for the authenticated user
   static async list(req, res) {
     try {
       const userId = req.user.id;
@@ -30,9 +27,7 @@ class NotificationController {
     }
   }
 
-  /**
-   * Get a single notification by ID
-   */
+  // Get a single notification by ID
   static async getOne(req, res) {
     try {
       const { id } = req.params;
@@ -51,14 +46,11 @@ class NotificationController {
     }
   }
 
-  /**
-   * Create a new notification (admin/system only)
-   */
+  // Create a new notification (admin/system use)
   static async create(req, res) {
     try {
       const { recipientId, title, message, type, relatedId } = req.body;
 
-      // Validation
       if (!recipientId || !title || !message || !type) {
         return errorResponse(res, 400, 'Missing required fields: recipientId, title, message, type');
       }
@@ -83,9 +75,7 @@ class NotificationController {
     }
   }
 
-  /**
-   * Mark a notification as read
-   */
+  // Mark a notification as read
   static async markAsRead(req, res) {
     try {
       const { id } = req.params;
@@ -104,9 +94,7 @@ class NotificationController {
     }
   }
 
-  /**
-   * Mark all notifications as read for the user
-   */
+  // Mark all notifications as read for the user
   static async markAllAsRead(req, res) {
     try {
       const userId = req.user.id;
@@ -120,9 +108,7 @@ class NotificationController {
     }
   }
 
-  /**
-   * Delete a specific notification
-   */
+  // Delete a specific notification
   static async delete(req, res) {
     try {
       const { id } = req.params;
@@ -141,9 +127,7 @@ class NotificationController {
     }
   }
 
-  /**
-   * Delete all notifications for the user
-   */
+  // Delete all notifications for the user
   static async deleteAll(req, res) {
     try {
       const userId = req.user.id;
@@ -157,9 +141,7 @@ class NotificationController {
     }
   }
 
-  /**
-   * Get unread notification count
-   */
+  // Get unread notification count
   static async getUnreadCount(req, res) {
     try {
       const userId = req.user.id;
@@ -173,9 +155,7 @@ class NotificationController {
     }
   }
 
-  /**
-   * Search notifications
-   */
+  // Search notifications
   static async search(req, res) {
     try {
       const userId = req.user.id;

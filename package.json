@@ -10,12 +10,12 @@
     "dev": "nodemon server.js",
     "test": "echo \"No tests yet\" && exit 0",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "seed": "node seed/demoData.js"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "bcrypt": "^6.0.0",
-    "bcryptjs": "^2.4.3",
     "cloudinary": "^2.10.0",
     "cors": "^2.8.0",
     "dotenv": "^16.4.1",
