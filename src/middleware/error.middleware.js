@@ -1,9 +1,15 @@
-function errorMiddleware(err, _req, res, _next) {
-  console.error(err);
-  const status = err.statusCode || 500;
-  res.status(status).json({
-    message: err.message || 'Internal server error'
+import { logger } from '../utils/logger.js';
+
+export function errorMiddleware(err, req, res, next) {
+  logger.error(err.message, { stack: err.stack, path: req.path });
+
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({
+    success: false,
+    error: {
+      message: err.message || 'Something went wrong',
+      code: err.code || 'INTERNAL_ERROR'
+    }
   });
 }
-
-export default errorMiddleware;
