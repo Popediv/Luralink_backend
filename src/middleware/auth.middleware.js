@@ -1,21 +1,26 @@
 import jwt from 'jsonwebtoken';
-import { jwtSecret } from '../config/env.js';
+import config from '../config/env.js';
 
-function authMiddleware(req, res, next) {
-  const authHeader = req.headers.authorization || '';
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+export function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
 
-  if (!token) {
-    return res.status(401).json({ message: 'Authentication token missing' });
+  if(!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({
+      success: false,
+      error: { message: 'No token provided', code: 'AUTH_MISSING_TOKEN' } 
+    });
   }
+
+  const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, jwtSecret);
-    req.user = decoded;
-    return next();
-  } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    const decoded = jwt.verify(token, config.jwtSecret);
+    req.user = { id: decoded.id, role: decoded.role};
+    next();
+  } catch (err){
+    return res.status(401).json({
+      success: false,
+      error: { message: 'Invalid token', code: 'AUTH_INVALID_TOKEN' }
+    });
   }
 }
-
-export default authMiddleware;
