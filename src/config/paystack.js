@@ -1,2 +1,2 @@
-export const secretKey = process.env.PAYSTACK_SECRET_KEY || '';
-export const publicKey = process.env.PAYSTACK_PUBLIC_KEY || '';
+export const secretKey = process.env.PAYSTACK_SECRET_KEY || 'sk_test_3c3227f6386373e4ab706cdf70a0a4ff02b6a8a0';
+export const publicKey = process.env.PAYSTACK_PUBLIC_KEY || 'pk_test_5e3932f6d50ed9d7710d43524ccf1c3d5d2b4db2';
