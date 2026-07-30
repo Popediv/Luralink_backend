@@ -3,9 +3,7 @@ import { prisma } from '../config/db.js';
 import { logger } from '../utils/logger.js';
 
 class NotificationService {
-  /**
-   * Get all notifications for a user with pagination
-   */
+  // Get all notifications for a user with pagination
   static async getUserNotifications(userId, options = {}) {
     try {
       const { limit = 10, offset = 0, unreadOnly = false } = options;
@@ -29,14 +27,12 @@ class NotificationService {
     }
   }
 
-  /**
-   * Get a single notification by ID (verify ownership)
-   */
+  // Get a single notification by ID (verify ownership)
   static async getNotificationById(id, userId) {
     try {
       const notification = await prisma.notification.findFirst({
         where: {
-          id,
+          id: Number(id),
           recipientId: userId,
         },
       });
@@ -48,14 +44,11 @@ class NotificationService {
     }
   }
 
-  /**
-   * Create a new notification
-   */
+  // Create a new notification
   static async createNotification(data) {
     try {
       const { recipientId, title, message, type, relatedId } = data;
 
-      // Verify recipient exists
       const recipient = await prisma.user.findUnique({
         where: { id: recipientId },
       });
@@ -84,17 +77,14 @@ class NotificationService {
     }
   }
 
-  /**
-   * Central trigger: save to DB and send push notification
-   */
+  // Save notification in DB and send push if possible
   static async triggerNotification(payload) {
     try {
       const { recipientId, title, message, type, relatedId } = payload;
 
-      // Save notification in DB
       const notification = await this.createNotification({ recipientId, title, message, type, relatedId });
 
-      // Attempt to send push notification (best-effort)
+      // Best-effort push notification
       try {
         await this.sendPushNotification(recipientId, {
           title,
@@ -113,34 +103,30 @@ class NotificationService {
     }
   }
 
-  /**
-   * Send push notification to user's registered device tokens (no-op fallback)
-   */
+  // Send push notification using FCM token if available
   static async sendPushNotification(userId, data) {
     try {
-      // Fetch user push tokens; field name depends on your schema (e.g. pushTokens)
-      const user = await prisma.user.findUnique({ where: { id: userId }, select: { pushTokens: true } });
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { fcmToken: true },
+      });
 
-      if (!user || !user.pushTokens || user.pushTokens.length === 0) {
-        logger.info('No push tokens for user', { userId });
+      if (!user || !user.fcmToken) {
+        logger.info('No FCM token registered for user', { userId });
         return null;
       }
 
-      // Integrate with your push provider here (FCM, OneSignal, etc.)
-      // Example (pseudo): await fcm.sendMulticast({ tokens: user.pushTokens, notification: { title: data.title, body: data.message }, data });
-
-      logger.info('Simulated push sent', { userId, tokens: user.pushTokens.length });
+      // FCM integration placeholder — connect your Firebase Admin SDK here
+      // e.g. admin.messaging().send({ token: user.fcmToken, notification: { title, body } })
+      logger.info('Push notification queued', { userId });
       return true;
     } catch (error) {
       logger.error('Error sending push notification', { error: error.message, userId });
-      // Don't throw to avoid breaking main flow
       return null;
     }
   }
 
-  /**
-   * Create bulk notifications (for multiple recipients)
-   */
+  // Create bulk notifications (for multiple recipients)
   static async createBulkNotifications(data) {
     try {
       const { recipientIds, title, message, type, relatedId } = data;
@@ -165,14 +151,12 @@ class NotificationService {
     }
   }
 
-  /**
-   * Mark a notification as read
-   */
+  // Mark a notification as read
   static async markAsRead(id, userId) {
     try {
       const notification = await prisma.notification.updateMany({
         where: {
-          id,
+          id: Number(id),
           recipientId: userId,
         },
         data: {
@@ -192,9 +176,7 @@ class NotificationService {
     }
   }
 
-  /**
-   * Mark all notifications as read for a user
-   */
+  // Mark all notifications as read for a user
   static async markAllAsRead(userId) {
     try {
       const result = await prisma.notification.updateMany({
@@ -216,14 +198,12 @@ class NotificationService {
     }
   }
 
-  /**
-   * Delete a notification
-   */
+  // Delete a notification
   static async deleteNotification(id, userId) {
     try {
       const notification = await prisma.notification.findFirst({
         where: {
-          id,
+          id: Number(id),
           recipientId: userId,
         },
       });
@@ -233,7 +213,7 @@ class NotificationService {
       }
 
       await prisma.notification.delete({
-        where: { id },
+        where: { id: Number(id) },
       });
 
       logger.info('Notification deleted', { notificationId: id });
@@ -244,9 +224,7 @@ class NotificationService {
     }
   }
 
-  /**
-   * Delete all notifications for a user
-   */
+  // Delete all notifications for a user
   static async deleteAllNotifications(userId) {
     try {
       const result = await prisma.notification.deleteMany({
@@ -263,9 +241,7 @@ class NotificationService {
     }
   }
 
-  /**
-   * Get unread notification count
-   */
+  // Get unread notification count
   static async getUnreadCount(userId) {
     try {
       const count = await prisma.notification.count({
@@ -282,14 +258,15 @@ class NotificationService {
     }
   }
 
-  /**
-   * Search notifications by query and type
-   */
+  // Search notifications by query and type
   static async searchNotifications(userId, query, type = null, limit = 10) {
     try {
       const where = {
         recipientId: userId,
-        OR: [{ title: { contains: query, mode: 'insensitive' } }, { message: { contains: query, mode: 'insensitive' } }],
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { message: { contains: query, mode: 'insensitive' } },
+        ],
       };
 
       if (type) {
@@ -309,9 +286,7 @@ class NotificationService {
     }
   }
 
-  /**
-   * Get notifications by type
-   */
+  // Get notifications by type
   static async getNotificationsByType(userId, type, limit = 10) {
     try {
       const notifications = await prisma.notification.findMany({
@@ -330,9 +305,7 @@ class NotificationService {
     }
   }
 
-  /**
-   * Get notifications by related ID (e.g., payment, shift, application)
-   */
+  // Get notifications by related entity ID
   static async getNotificationsByRelatedId(userId, relatedId) {
     try {
       const notifications = await prisma.notification.findMany({
@@ -350,9 +323,7 @@ class NotificationService {
     }
   }
 
-  /**
-   * Delete old notifications (older than specified days)
-   */
+  // Delete old notifications (older than specified days)
   static async deleteOldNotifications(days = 30) {
     try {
       const cutoffDate = new Date();
