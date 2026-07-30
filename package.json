@@ -7,10 +7,12 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "build": "prisma generate && prisma db push",
     "dev": "nodemon server.js",
     "test": "echo \"No tests yet\" && exit 0",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:dbpush": "prisma db push",
     "seed": "node seed/demoData.js"
   },
   "dependencies": {
