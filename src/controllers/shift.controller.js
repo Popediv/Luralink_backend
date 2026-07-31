@@ -495,4 +495,85 @@ export async function deleteShift(req, res, next) {
   }
 }
 
+
+// Worker marks shift as complete → moves to completed_pending_confirmation
+export async function markShiftComplete(req, res, next) {
+  try {
+    const id = parsePositiveInteger(req.params.id, null);
+    if (!id) {
+      return errorResponse(res, 400, 'Invalid shift ID', 'INVALID_SHIFT_ID');
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId: req.user.id } });
+    if (!worker) {
+      return errorResponse(res, 403, 'Worker profile required', 'WORKER_PROFILE_REQUIRED');
+    }
+
+    const shift = await prisma.shift.findUnique({ where: { id } });
+    if (!shift) {
+      return errorResponse(res, 404, 'Shift not found', 'SHIFT_NOT_FOUND');
+    }
+    if (shift.workerId !== worker.id) {
+      return errorResponse(res, 403, 'You are not assigned to this shift', 'SHIFT_FORBIDDEN');
+    }
+    if (shift.status !== 'in_progress') {
+      return errorResponse(
+        res, 409,
+        'Only in-progress shifts can be marked as complete',
+        'SHIFT_NOT_IN_PROGRESS',
+      );
+    }
+
+    const updated = await prisma.shift.update({
+      where: { id },
+      data: { status: 'completed_pending_confirmation', completedAt: new Date() },
+      include: facilityInclude,
+    });
+
+    return successResponse(res, 200, updated);
+  } catch (err) {
+    next(err);
+  }
+}
+
+// Facility confirms shift completion → moves to completed
+export async function confirmShiftComplete(req, res, next) {
+  try {
+    const id = parsePositiveInteger(req.params.id, null);
+    if (!id) {
+      return errorResponse(res, 400, 'Invalid shift ID', 'INVALID_SHIFT_ID');
+    }
+
+    const facility = await getAuthenticatedFacility(req.user.id);
+    if (!facility) {
+      return errorResponse(res, 403, 'Facility profile required', 'FACILITY_PROFILE_REQUIRED');
+    }
+
+    const shift = await prisma.shift.findUnique({ where: { id } });
+    if (!shift) {
+      return errorResponse(res, 404, 'Shift not found', 'SHIFT_NOT_FOUND');
+    }
+    if (shift.facilityId !== facility.id) {
+      return errorResponse(res, 403, 'This shift does not belong to your facility', 'SHIFT_FORBIDDEN');
+    }
+    if (shift.status !== 'completed_pending_confirmation') {
+      return errorResponse(
+        res, 409,
+        'Shift must be in completed_pending_confirmation state to confirm',
+        'SHIFT_NOT_PENDING_CONFIRMATION',
+      );
+    }
+
+    const updated = await prisma.shift.update({
+      where: { id },
+      data: { status: 'completed' },
+      include: facilityInclude,
+    });
+
+    return successResponse(res, 200, updated);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export { SHIFT_STATUSES, validateShift };

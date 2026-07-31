@@ -45,7 +45,7 @@ class PaymentController {
         paystack: paystackPayload,
       });
     } catch (error) {
-      log('PaymentController.initializeEscrow error', { error: error.message });
+      logger.error('PaymentController.initializeEscrow error', { error: error.message });
       return errorResponse(res, 500, 'Failed to initialize escrow payment');
     }
   }

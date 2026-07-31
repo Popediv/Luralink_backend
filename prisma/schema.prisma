@@ -108,6 +108,7 @@ model Shift {
   applications Application[]
   payment      Payment?
   disputes     Dispute[]
+  ratings      Rating[]
 }
 
 model Application {
@@ -149,19 +150,26 @@ model Rating {
   fromUser   User     @relation("RatingsGiven", fields: [fromUserId], references: [id])
   toUserId   Int
   toUser     User     @relation("RatingsReceived", fields: [toUserId], references: [id])
+  shiftId    Int?
+  shift      Shift?   @relation(fields: [shiftId], references: [id])
   score      Int
   comment    String?
   createdAt  DateTime @default(now())
+
+  @@unique([fromUserId, shiftId])
 }
 
 model Notification {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  title     String
-  message   String
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  recipientId Int
+  recipient   User     @relation(fields: [recipientId], references: [id])
+  title       String
+  message     String
+  type        String   @default("info")
+  relatedId   Int?
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+  createdAt   DateTime @default(now())
 }
 
 model Dispute {
