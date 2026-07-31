@@ -20,6 +20,12 @@ const app = express();
 
 app.use(cors());
 app.use(helmet());
+
+//     Paystack webhook MUST be mounted before express.json().
+//     The handler uses express.raw() to read the raw body bytes for HMAC verification.
+//     If express.json() runs first it consumes the body and verification always fails.
+app.use('/api/webhooks/paystack', paystackWebhook);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

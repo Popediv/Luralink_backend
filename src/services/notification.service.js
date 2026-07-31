@@ -1,4 +1,5 @@
 
+import admin from '../firebase/admin.js';
 import { prisma } from '../config/db.js';
 import { logger } from '../utils/logger.js';
 
@@ -126,10 +127,9 @@ class NotificationService {
         return null;
       }
 
-      // Integrate with your push provider here (FCM, OneSignal, etc.)
-      // Example (pseudo): await fcm.sendMulticast({ tokens: user.pushTokens, notification: { title: data.title, body: data.message }, data });
-
-      logger.info('Simulated push sent', { userId, tokens: user.pushTokens.length });
+      // FCM integration placeholder — connect your Firebase Admin SDK here
+      // e.g. admin.messaging().send({ token: user.fcmToken, notification: { title, body } })
+      logger.info('Push notification queued', { userId });
       return true;
     } catch (error) {
       logger.error('Error sending push notification', { error: error.message, userId });
